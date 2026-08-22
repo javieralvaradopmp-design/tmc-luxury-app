@@ -2,7 +2,8 @@ export type Property = {
   slug: string;
   name: string;
   owner: string;
-  image: string;
+  image: string | null;
+  status?: "active" | "offboarded";
 };
 
 export const PROPERTIES: Property[] = [

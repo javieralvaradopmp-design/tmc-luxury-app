@@ -78,7 +78,7 @@ export default function InvestorPortfolio() {
               cursor: "pointer",
             }}
           >
-            <img src={p.image} alt={p.name} style={{ width: 46, height: 46, borderRadius: 10, objectFit: "cover", flex: "none" }} />
+            <img src={p.image ?? undefined} alt={p.name} style={{ width: 46, height: 46, borderRadius: 10, objectFit: "cover", flex: "none" }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12.5, color: "var(--off-white)", fontWeight: 500 }}>{p.name}</div>
               <div style={{ fontSize: 10, color: "var(--muted)", marginTop: 2 }}>Owner: {p.owner}</div>

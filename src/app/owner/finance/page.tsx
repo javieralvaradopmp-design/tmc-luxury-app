@@ -7,8 +7,9 @@ import { byLevelPrefix } from "@/lib/functionalities";
 import { formatMoney } from "@/lib/format";
 
 export default function OwnerFinance() {
-  const { invoices, approveInvoice, showToast } = useApp();
+  const { invoices, approveInvoice, showToast, properties, activeOwnerSlug } = useApp();
   const [feePct, setFeePct] = useState(15);
+  const active = properties.find((p) => p.slug === activeOwnerSlug) || properties[0];
 
   const total = invoices.reduce((sum, i) => sum + i.amount, 0);
   const vendorTotal = invoices.filter((i) => !i.vendor.includes("TMC")).reduce((s, i) => s + i.amount, 0);
@@ -37,7 +38,7 @@ export default function OwnerFinance() {
         <TopBar title="Finance" />
 
         <div style={{ background: "var(--navy-card)", border: "1px solid var(--hairline)", borderRadius: 16, padding: 16, marginTop: 12 }}>
-          <div style={{ fontSize: 10.5, color: "var(--muted)" }}>Monthly report · This month, Star Island Residence</div>
+          <div style={{ fontSize: 10.5, color: "var(--muted)" }}>Monthly report · This month, {active.name}</div>
           <div className="font-display" style={{ fontSize: 24, color: "var(--gold-soft)", fontWeight: 600, marginTop: 2 }}>
             ${formatMoney(total)}
           </div>

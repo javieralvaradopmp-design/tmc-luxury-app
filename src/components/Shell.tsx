@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useApp } from "@/lib/store";
 import type { FunctionalityItem } from "@/lib/functionalities";
 import { isActive, trackColor, trackMessage } from "@/lib/functionalities";
@@ -303,5 +304,35 @@ export function Screen({ children }: { children: React.ReactNode }) {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <div style={{ flex: 1, overflowY: "auto", padding: "0 18px" }}>{children}</div>
     </div>
+  );
+}
+
+export function GlobalHomeButton() {
+  const pathname = usePathname();
+  if (pathname === "/") return null;
+  return (
+    <Link
+      href="/"
+      aria-label="Back to role selection"
+      style={{
+        position: "fixed",
+        top: 14,
+        left: 14,
+        width: 30,
+        height: 30,
+        borderRadius: "50%",
+        background: "rgba(9,17,36,0.85)",
+        border: "1px solid var(--hairline)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 60,
+        textDecoration: "none",
+      }}
+    >
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold-soft)" strokeWidth="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      </svg>
+    </Link>
   );
 }

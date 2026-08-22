@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useApp, type Role } from "@/lib/store";
 
 const ROLES: { role: Role; label: string; sub: string; href: string }[] = [
-  { role: "owner", label: "Owner", sub: "Edward Pemberton", href: "/owner/home" },
+  { role: "owner", label: "Owner", sub: "Choose which owner to preview", href: "/owner" },
   { role: "investor", label: "Investor", sub: "Brian A. Sidman", href: "/investor/portfolio" },
   { role: "admin", label: "Internal / Admin", sub: "JP Alvarado", href: "/admin/tickets" },
   { role: "pm", label: "Property Manager", sub: "Javier Alvarado", href: "/pm/command" },
@@ -15,11 +15,14 @@ export default function RoleSelect() {
   const { setRole } = useApp();
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: 28 }}>
-      <p style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600, textAlign: "center", margin: "0 0 6px" }}>
-        TMC Luxury Miami
-      </p>
-      <h1 className="font-display" style={{ fontSize: 24, textAlign: "center", margin: "0 0 36px", color: "var(--off-white)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "20px 20px 28px" }}>
+      <img
+        src="/hero-banner.jpg"
+        alt="TMC Luxury Miami"
+        style={{ width: "100%", borderRadius: 16, marginBottom: 20, display: "block" }}
+      />
+
+      <h1 className="font-display" style={{ fontSize: 22, textAlign: "center", margin: "0 0 28px", color: "var(--off-white)" }}>
         Choose a role to preview
       </h1>
 
@@ -47,7 +50,7 @@ export default function RoleSelect() {
         ))}
       </div>
 
-      <p style={{ fontSize: 11, color: "var(--muted)", textAlign: "center", marginTop: 36, lineHeight: 1.6 }}>
+      <p style={{ fontSize: 11, color: "var(--muted)", textAlign: "center", marginTop: 28, lineHeight: 1.6 }}>
         Internal pilot · sample data only
       </p>
     </div>

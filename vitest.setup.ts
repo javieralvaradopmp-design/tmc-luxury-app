@@ -4,6 +4,7 @@ import React from "react";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+  usePathname: vi.fn(() => "/mock-path"),
 }));
 
 vi.mock("next/link", () => ({

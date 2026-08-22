@@ -17,7 +17,8 @@ const PERMISSIONS = [
 
 export default function OwnerProfile() {
   const router = useRouter();
-  const { setRole, showToast } = useApp();
+  const { setRole, showToast, properties, activeOwnerSlug } = useApp();
+  const active = properties.find((p) => p.slug === activeOwnerSlug) || properties[0];
   const [prefs, setPrefs] = useState<Pref[]>([
     { key: "notif_whatsapp", label: "WhatsApp notifications", value: true },
     { key: "notif_email", label: "Email notifications", value: true },
@@ -55,11 +56,11 @@ export default function OwnerProfile() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 2px" }}>
           <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(201,162,75,0.16)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 600, color: "var(--gold-soft)" }}>
-            EP
+            {active.owner.split(" ").map((w) => w[0]).slice(0, 2).join("")}
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--off-white)" }}>Edward Pemberton</div>
-            <div style={{ fontSize: 11, color: "var(--muted)" }}>Owner · Star Island Residence</div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: "var(--off-white)" }}>{active.owner}</div>
+            <div style={{ fontSize: 11, color: "var(--muted)" }}>Owner · {active.name}</div>
           </div>
         </div>
 

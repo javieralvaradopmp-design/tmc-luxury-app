@@ -16,7 +16,8 @@ const MODULES = [
 
 export default function OwnerHome() {
   const router = useRouter();
-  const { showToast, ownerRequests, incidents } = useApp();
+  const { showToast, ownerRequests, incidents, properties, activeOwnerSlug } = useApp();
+  const active = properties.find((p) => p.slug === activeOwnerSlug) || properties[0];
 
   return (
     <div style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -25,7 +26,7 @@ export default function OwnerHome() {
         <div style={{ padding: "18px 2px 4px" }}>
           <p style={{ fontSize: 11, color: "var(--muted)", margin: "0 0 2px", fontWeight: 500 }}>Good evening</p>
           <h2 className="font-display" style={{ fontSize: 20, margin: 0, color: "var(--off-white)" }}>
-            Edward Pemberton
+            {active.owner}
           </h2>
           <div
             style={{
@@ -41,8 +42,12 @@ export default function OwnerHome() {
               background: "var(--navy-card)",
             }}
           >
-            <img src="/properties/star-island.jpg" alt="Star Island Residence" style={{ width: 22, height: 22, borderRadius: "50%", objectFit: "cover" }} />
-            Star Island Residence
+            {active.image ? (
+              <img src={active.image} alt={active.name} style={{ width: 22, height: 22, borderRadius: "50%", objectFit: "cover" }} />
+            ) : (
+              <div style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--navy-card-2)" }} />
+            )}
+            {active.name}
           </div>
         </div>
 

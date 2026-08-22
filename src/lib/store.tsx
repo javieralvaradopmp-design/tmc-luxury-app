@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
+import { PROPERTIES as SEED_PROPERTIES, type Property } from "@/lib/properties";
 
 export type Role = "owner" | "investor" | "admin" | "pm";
 
@@ -42,6 +43,8 @@ type State = {
   invoices: Invoice[];
   ownerRequests: OwnerRequest[];
   incidents: Incident[];
+  properties: Property[];
+  activeOwnerSlug: string;
   toast: string | null;
 };
 
@@ -53,6 +56,9 @@ type Actions = {
   approveInvoice: (id: string) => void;
   addOwnerRequest: (description: string) => void;
   addIncident: (description: string) => void;
+  addProperty: (name: string, owner: string) => void;
+  offboardProperty: (slug: string) => void;
+  setActiveOwnerSlug: (slug: string) => void;
   addPhoto: (ticketId: string) => void;
   completeTicket: (ticketId: string) => void;
   convertTicketToInvoice: (ticketId: string, amount: number) => void;
@@ -84,6 +90,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const [ownerRequests, setOwnerRequests] = useState<OwnerRequest[]>(initialOwnerRequests);
   const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [properties, setProperties] = useState<Property[]>(
+    SEED_PROPERTIES.map((p) => ({ ...p, status: "active" as const }))
+  );
+  const [activeOwnerSlug, setActiveOwnerSlug] = useState<string>("star-island");
   const [toast, setToast] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
@@ -108,6 +118,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addIncident = useCallback((description: string) => {
     setIncidents((prev) => [{ id: `inc${Date.now()}`, description, createdAt: Date.now() }, ...prev]);
+  }, []);
+
+  const addProperty = useCallback((name: string, owner: string) => {
+    const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}`;
+    setProperties((prev) => [...prev, { slug, name, owner, image: null, status: "active" }]);
+  }, []);
+
+  const offboardProperty = useCallback((slug: string) => {
+    setProperties((prev) => prev.map((p) => (p.slug === slug ? { ...p, status: "offboarded" } : p)));
   }, []);
 
   const addPhoto = useCallback((ticketId: string) => {
@@ -139,6 +158,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         invoices,
         ownerRequests,
         incidents,
+        properties,
+        activeOwnerSlug,
         toast,
         setRole,
         showToast,
@@ -147,6 +168,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         approveInvoice,
         addOwnerRequest,
         addIncident,
+        addProperty,
+        offboardProperty,
+        setActiveOwnerSlug,
         addPhoto,
         completeTicket,
         convertTicketToInvoice,

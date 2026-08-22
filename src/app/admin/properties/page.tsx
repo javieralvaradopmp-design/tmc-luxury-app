@@ -3,16 +3,9 @@
 import { useState } from "react";
 import { Screen, TopBar, BottomNav, Toast, SectionTitle } from "@/components/Shell";
 import { useApp } from "@/lib/store";
-import { PROPERTIES } from "@/lib/properties";
-
-type Prop = { name: string; owner: string; status: "active" | "offboarded" };
-
-const INITIAL: Prop[] = PROPERTIES.map((p) => ({ name: p.name, owner: p.owner, status: "active" as const }));
-const IMAGE_BY_NAME: Record<string, string> = Object.fromEntries(PROPERTIES.map((p) => [p.name, p.image]));
 
 export default function AdminProperties() {
-  const { showToast } = useApp();
-  const [properties, setProperties] = useState<Prop[]>(INITIAL);
+  const { properties, addProperty, offboardProperty, showToast } = useApp();
   const [wizardStep, setWizardStep] = useState(0); // 0 = closed
   const [form, setForm] = useState({ name: "", owner: "" });
 
@@ -26,7 +19,7 @@ export default function AdminProperties() {
       return;
     }
     if (wizardStep === 3) {
-      setProperties((prev) => [...prev, { name: form.name, owner: form.owner, status: "active" }]);
+      addProperty(form.name, form.owner);
       setForm({ name: "", owner: "" });
       setWizardStep(0);
       showToast("Property onboarded");
@@ -86,10 +79,12 @@ export default function AdminProperties() {
 
         <SectionTitle>All properties</SectionTitle>
         {properties.map((p) => (
-          <div key={p.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 2px", borderBottom: "1px solid var(--hairline)", opacity: p.status === "offboarded" ? 0.4 : 1 }}>
+          <div key={p.slug} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 2px", borderBottom: "1px solid var(--hairline)", opacity: p.status === "offboarded" ? 0.4 : 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {IMAGE_BY_NAME[p.name] && (
-                <img src={IMAGE_BY_NAME[p.name]} alt={p.name} style={{ width: 38, height: 38, borderRadius: 9, objectFit: "cover", flex: "none" }} />
+              {p.image ? (
+                <img src={p.image} alt={p.name} style={{ width: 38, height: 38, borderRadius: 9, objectFit: "cover", flex: "none" }} />
+              ) : (
+                <div style={{ width: 38, height: 38, borderRadius: 9, background: "var(--navy-card-2)", flex: "none" }} />
               )}
               <div>
                 <div style={{ fontSize: 12.5, color: "var(--off-white)", fontWeight: 500 }}>{p.name}</div>
@@ -99,7 +94,7 @@ export default function AdminProperties() {
             {p.status === "active" ? (
               <span
                 onClick={() => {
-                  setProperties((prev) => prev.map((x) => (x.name === p.name ? { ...x, status: "offboarded" } : x)));
+                  offboardProperty(p.slug);
                   showToast("Property offboarded");
                 }}
                 style={{ fontSize: 10, color: "var(--sunset)", cursor: "pointer", fontWeight: 500 }}

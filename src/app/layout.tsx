@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
+import { GlobalHomeButton } from "@/components/Shell";
 
 export const metadata: Metadata = {
   title: "TMC Luxury Miami",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body>
         <AppProvider>
           <div style={{ maxWidth: 480, margin: "0 auto", minHeight: "100vh", position: "relative" }}>
+            <GlobalHomeButton />
             {children}
           </div>
         </AppProvider>

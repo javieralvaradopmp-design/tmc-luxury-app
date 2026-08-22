@@ -27,7 +27,7 @@ export default function InvestorProperties() {
         <TopBar title={p.name} back="/investor/portfolio" />
 
         <img
-          src={PROPERTY_PHOTOS[selected].image}
+          src={PROPERTY_PHOTOS[selected].image ?? undefined}
           alt={p.name}
           style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 16, marginTop: 4 }}
         />
