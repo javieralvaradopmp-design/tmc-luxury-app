@@ -3,15 +3,12 @@
 import { useState } from "react";
 import { Screen, TopBar, BottomNav, Toast, SectionTitle } from "@/components/Shell";
 import { useApp } from "@/lib/store";
+import { PROPERTIES } from "@/lib/properties";
 
 type Prop = { name: string; owner: string; status: "active" | "offboarded" };
 
-const INITIAL: Prop[] = [
-  { name: "Star Island Residence", owner: "Edward Pemberton", status: "active" },
-  { name: "Fisher Island Villa", owner: "D. Marchetti", status: "active" },
-  { name: "Bal Harbour Penthouse", owner: "K. Souza", status: "active" },
-  { name: "Coconut Grove Estate", owner: "R. Palacios", status: "active" },
-];
+const INITIAL: Prop[] = PROPERTIES.map((p) => ({ name: p.name, owner: p.owner, status: "active" as const }));
+const IMAGE_BY_NAME: Record<string, string> = Object.fromEntries(PROPERTIES.map((p) => [p.name, p.image]));
 
 export default function AdminProperties() {
   const { showToast } = useApp();
@@ -90,9 +87,14 @@ export default function AdminProperties() {
         <SectionTitle>All properties</SectionTitle>
         {properties.map((p) => (
           <div key={p.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 2px", borderBottom: "1px solid var(--hairline)", opacity: p.status === "offboarded" ? 0.4 : 1 }}>
-            <div>
-              <div style={{ fontSize: 12.5, color: "var(--off-white)", fontWeight: 500 }}>{p.name}</div>
-              <div style={{ fontSize: 10, color: "var(--muted)", marginTop: 2 }}>{p.owner}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {IMAGE_BY_NAME[p.name] && (
+                <img src={IMAGE_BY_NAME[p.name]} alt={p.name} style={{ width: 38, height: 38, borderRadius: 9, objectFit: "cover", flex: "none" }} />
+              )}
+              <div>
+                <div style={{ fontSize: 12.5, color: "var(--off-white)", fontWeight: 500 }}>{p.name}</div>
+                <div style={{ fontSize: 10, color: "var(--muted)", marginTop: 2 }}>{p.owner}</div>
+              </div>
             </div>
             {p.status === "active" ? (
               <span

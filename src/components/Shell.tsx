@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/lib/store";
 import type { FunctionalityItem } from "@/lib/functionalities";
-import { isActive } from "@/lib/functionalities";
+import { isActive, trackColor, trackMessage } from "@/lib/functionalities";
 
 export function TopBar({ title, back }: { title: string; back?: string }) {
   return (
@@ -52,12 +53,19 @@ export function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 export function FeatureRow({ item }: { item: FunctionalityItem }) {
-  const { showToast } = useApp();
+  const { showToast, addOwnerRequest } = useApp();
   const active = isActive(item);
+  const { fg, bg } = trackColor(item);
+  const message = trackMessage(item);
 
   const handleClick = () => {
-    if (!active) {
-      showToast("Under construction");
+    if (item.track === "Concierge") {
+      addOwnerRequest(item.functionality);
+      showToast("Request submitted");
+      return;
+    }
+    if (!active && message) {
+      showToast(message);
     }
   };
 
@@ -70,8 +78,8 @@ export function FeatureRow({ item }: { item: FunctionalityItem }) {
         justifyContent: "space-between",
         padding: "13px 4px",
         borderBottom: "1px solid var(--hairline)",
-        cursor: "pointer",
-        opacity: active ? 1 : 0.45,
+        cursor: active || message ? "pointer" : "default",
+        opacity: active ? 1 : 0.7,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
@@ -80,18 +88,27 @@ export function FeatureRow({ item }: { item: FunctionalityItem }) {
             width: 30,
             height: 30,
             borderRadius: 9,
-            background: "var(--navy-card-2)",
+            background: bg,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flex: "none",
           }}
         >
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: active ? "var(--gold)" : "var(--muted)" }} />
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: fg }} />
         </div>
         <span style={{ fontSize: 13, color: "var(--off-white)", fontWeight: 500 }}>{item.functionality}</span>
       </div>
-      <span style={{ fontSize: 10, color: "var(--muted)" }}>{active ? "→" : "soon"}</span>
+      {!active && (
+        <span style={{ fontSize: 9, fontWeight: 600, padding: "3px 8px", borderRadius: 100, background: bg, color: fg, whiteSpace: "nowrap" }}>
+          {item.track}
+        </span>
+      )}
+      {active && item.track === "Concierge" && (
+        <span style={{ fontSize: 9, fontWeight: 600, padding: "3px 8px", borderRadius: 100, background: bg, color: fg, whiteSpace: "nowrap" }}>
+          Request
+        </span>
+      )}
     </div>
   );
 }
@@ -131,7 +148,7 @@ export function BottomNav({ role, active }: { role: "owner" | "investor" | "admi
         display: "flex",
         borderTop: "1px solid var(--hairline)",
         background: "rgba(9,17,36,0.96)",
-        padding: "10px 6px 18px",
+        padding: "10px 6px 56px",
         position: "sticky",
         bottom: 0,
       }}
@@ -196,28 +213,88 @@ export function Toast() {
 }
 
 export function SOSButton() {
-  const { showToast } = useApp();
+  const { showToast, addIncident } = useApp();
+  const [open, setOpen] = useState(false);
+  const [desc, setDesc] = useState("");
+
+  function submit() {
+    if (!desc.trim()) {
+      showToast("Describe the emergency first");
+      return;
+    }
+    addIncident(desc.trim());
+    setDesc("");
+    setOpen(false);
+    showToast("Incident reported — TMC on-call notified");
+  }
+
   return (
-    <button
-      onClick={() => showToast("Emergency line — under construction in this pilot")}
-      style={{
-        position: "absolute",
-        top: 16,
-        right: 16,
-        width: 36,
-        height: 36,
-        borderRadius: "50%",
-        background: "var(--navy)",
-        border: "1.5px solid var(--sunset)",
-        color: "var(--sunset)",
-        fontSize: 12,
-        fontWeight: 600,
-        zIndex: 5,
-      }}
-      aria-label="Emergency"
-    >
-      !
-    </button>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        style={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: "var(--navy)",
+          border: "1.5px solid var(--sunset)",
+          color: "var(--sunset)",
+          fontSize: 12,
+          fontWeight: 600,
+          zIndex: 5,
+        }}
+        aria-label="Emergency"
+      >
+        !
+      </button>
+      {open && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "flex-end",
+            zIndex: 40,
+          }}
+          onClick={() => setOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 480,
+              margin: "0 auto",
+              background: "var(--navy-card)",
+              borderTop: "1.5px solid var(--sunset)",
+              borderRadius: "18px 18px 0 0",
+              padding: 20,
+            }}
+          >
+            <p style={{ fontSize: 13, fontWeight: 600, color: "var(--sunset)", margin: "0 0 10px" }}>Report an emergency</p>
+            <textarea
+              autoFocus
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              placeholder="What's happening?"
+              rows={3}
+              style={{ width: "100%", background: "var(--navy)", border: "1px solid var(--hairline)", borderRadius: 10, color: "var(--off-white)", fontSize: 12.5, padding: 10, resize: "none", fontFamily: "inherit" }}
+            />
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <button onClick={submit} style={{ flex: 1, background: "var(--sunset)", color: "#241A05", fontWeight: 600, fontSize: 12, padding: 11, borderRadius: 10, border: "none", cursor: "pointer" }}>
+                Send
+              </button>
+              <button onClick={() => setOpen(false)} style={{ flex: 1, background: "transparent", color: "var(--muted)", fontSize: 12, padding: 11, borderRadius: 10, border: "1px solid var(--hairline)", cursor: "pointer" }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

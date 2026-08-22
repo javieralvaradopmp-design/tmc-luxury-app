@@ -18,11 +18,15 @@ const REMINDERS = [
   { label: "Annual insurance renewal", when: "Apr 2" },
 ];
 
+const PETS = [
+  { name: "Bella", type: "Dog", nextVaccine: "Mar 18", feeding: "2x daily" },
+  { name: "Milo", type: "Cat", nextVaccine: "May 2", feeding: "3x daily" },
+];
+
 export default function OwnerServices() {
-  const { showToast } = useApp();
+  const { showToast, ownerRequests, addOwnerRequest } = useApp();
   const [requestOpen, setRequestOpen] = useState(false);
   const [requestDesc, setRequestDesc] = useState("");
-  const [submitted, setSubmitted] = useState<string[]>([]);
 
   const propertyItems = [...byLevelPrefix("1.1"), ...byLevelPrefix("1.2"), ...byLevelPrefix("1.3")].filter(
     (i) => !["Recurring Service Management", "Non-Recurring Service Request"].includes(i.functionality)
@@ -37,7 +41,7 @@ export default function OwnerServices() {
       showToast("Describe the request first");
       return;
     }
-    setSubmitted((prev) => [requestDesc.trim(), ...prev]);
+    addOwnerRequest(requestDesc.trim());
     setRequestDesc("");
     setRequestOpen(false);
     showToast("Request submitted");
@@ -114,11 +118,11 @@ export default function OwnerServices() {
             </div>
           </div>
         )}
-        {submitted.length > 0 && (
+        {ownerRequests.length > 0 && (
           <div style={{ marginTop: 10 }}>
-            {submitted.map((s, idx) => (
-              <div key={idx} style={{ fontSize: 11.5, color: "var(--muted)", padding: "8px 4px", borderBottom: "1px solid var(--hairline)" }}>
-                <span style={{ color: "var(--gold-soft)" }}>Submitted · </span>{s}
+            {ownerRequests.map((r) => (
+              <div key={r.id} style={{ fontSize: 11.5, color: "var(--muted)", padding: "8px 4px", borderBottom: "1px solid var(--hairline)" }}>
+                <span style={{ color: "var(--gold-soft)" }}>Active · </span>{r.description}
               </div>
             ))}
           </div>
@@ -130,6 +134,19 @@ export default function OwnerServices() {
             <div key={r.label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 10px", borderBottom: "1px solid var(--hairline)" }}>
               <span style={{ fontSize: 12, color: "var(--off-white)" }}>{r.label}</span>
               <span style={{ fontSize: 11, color: "var(--muted)" }}>{r.when}</span>
+            </div>
+          ))}
+        </div>
+
+        <SectionTitle>Pet care</SectionTitle>
+        <div style={{ background: "var(--navy-card)", border: "1px solid var(--hairline)", borderRadius: 16, padding: 4, marginBottom: 4 }}>
+          {PETS.map((pet) => (
+            <div key={pet.name} style={{ padding: "10px 10px", borderBottom: "1px solid var(--hairline)" }}>
+              <div style={{ fontSize: 12, color: "var(--off-white)", fontWeight: 500 }}>{pet.name} · {pet.type}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
+                <span style={{ fontSize: 10.5, color: "var(--muted)" }}>Next vaccine: {pet.nextVaccine}</span>
+                <span style={{ fontSize: 10.5, color: "var(--muted)" }}>Feeding: {pet.feeding}</span>
+              </div>
             </div>
           ))}
         </div>

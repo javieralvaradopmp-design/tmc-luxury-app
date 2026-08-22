@@ -16,7 +16,7 @@ const MODULES = [
 
 export default function OwnerHome() {
   const router = useRouter();
-  const { showToast } = useApp();
+  const { showToast, ownerRequests, incidents } = useApp();
 
   return (
     <div style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -30,8 +30,10 @@ export default function OwnerHome() {
           <div
             style={{
               display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
               marginTop: 10,
-              padding: "7px 12px",
+              padding: "5px 12px 5px 5px",
               border: "1px solid var(--hairline)",
               borderRadius: 100,
               fontSize: 12,
@@ -39,13 +41,14 @@ export default function OwnerHome() {
               background: "var(--navy-card)",
             }}
           >
+            <img src="/properties/star-island.jpg" alt="Star Island Residence" style={{ width: 22, height: 22, borderRadius: "50%", objectFit: "cover" }} />
             Star Island Residence
           </div>
         </div>
 
         <div style={{ display: "flex", gap: 8, margin: "16px 0 4px" }}>
           {[
-            { num: "2", lbl: "Active requests" },
+            { num: String(ownerRequests.length), lbl: "Active requests" },
             { num: "Mar 14", lbl: "Next inspection" },
             { num: "$4,230", lbl: "This month" },
           ].map((s) => (
@@ -57,11 +60,11 @@ export default function OwnerHome() {
         </div>
 
         <SectionTitle>Explore</SectionTitle>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, paddingBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {MODULES.map((m) => (
             <div
               key={m.name}
-              onClick={() => (m.href ? router.push(m.href) : showToast("Emergency line — under construction in this pilot"))}
+              onClick={() => (m.href ? router.push(m.href) : showToast("Use the emergency button, top right"))}
               style={{
                 background: "var(--navy-card)",
                 border: `1px solid ${m.urgent ? "rgba(217,122,61,0.55)" : "var(--hairline)"}`,
@@ -84,6 +87,19 @@ export default function OwnerHome() {
             </div>
           ))}
         </div>
+
+        {incidents.length > 0 && (
+          <>
+            <SectionTitle>Incidents reported</SectionTitle>
+            {incidents.map((inc) => (
+              <div key={inc.id} style={{ fontSize: 11.5, color: "var(--muted)", padding: "8px 4px", borderBottom: "1px solid var(--hairline)" }}>
+                <span style={{ color: "var(--sunset)" }}>Reported · </span>{inc.description}
+              </div>
+            ))}
+          </>
+        )}
+
+        <div style={{ height: 24 }} />
       </Screen>
       <BottomNav role="owner" active="Home" />
       <Toast />

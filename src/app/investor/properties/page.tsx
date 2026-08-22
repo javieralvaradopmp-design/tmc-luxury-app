@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Screen, TopBar, BottomNav, Toast, SectionTitle } from "@/components/Shell";
 import { useApp } from "@/lib/store";
+import { PROPERTIES as PROPERTY_PHOTOS } from "@/lib/properties";
+import { formatMoney } from "@/lib/format";
 
 const PROPERTIES = [
   { name: "Star Island Residence", onboarded: "Jan 12", inspection: "Mar 14", revenue: 16800, vendorCost: 9150, mgmtFee: 3150, svcFee: 900 },
@@ -23,6 +25,12 @@ export default function InvestorProperties() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Screen>
         <TopBar title={p.name} back="/investor/portfolio" />
+
+        <img
+          src={PROPERTY_PHOTOS[selected].image}
+          alt={p.name}
+          style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 16, marginTop: 4 }}
+        />
 
         <div style={{ display: "flex", gap: 6, padding: "8px 2px", overflowX: "auto" }}>
           {PROPERTIES.map((prop, idx) => (
@@ -57,11 +65,11 @@ export default function InvestorProperties() {
 
         <SectionTitle>Breakdown</SectionTitle>
         {[
-          ["Gross revenue", `$${p.revenue.toLocaleString()}`],
-          ["Vendor / third-party cost", `$${p.vendorCost.toLocaleString()}`],
-          ["Management fee income", `$${p.mgmtFee.toLocaleString()}`],
-          ["Service fee income", `$${p.svcFee.toLocaleString()}`],
-          ["Net TMC margin", `$${netMargin.toLocaleString()}`],
+          ["Gross revenue", `$${formatMoney(p.revenue)}`],
+          ["Vendor / third-party cost", `$${formatMoney(p.vendorCost)}`],
+          ["Management fee income", `$${formatMoney(p.mgmtFee)}`],
+          ["Service fee income", `$${formatMoney(p.svcFee)}`],
+          ["Net TMC margin", `$${formatMoney(netMargin)}`],
         ].map(([lbl, val]) => (
           <div key={lbl} style={{ display: "flex", justifyContent: "space-between", padding: "10px 2px", borderBottom: "1px solid var(--hairline)" }}>
             <span style={{ fontSize: 12, color: "var(--muted)" }}>{lbl}</span>

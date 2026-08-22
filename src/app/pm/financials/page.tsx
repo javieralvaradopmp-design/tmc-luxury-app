@@ -1,6 +1,7 @@
 "use client";
 
 import { Screen, TopBar, BottomNav, Toast, SectionTitle } from "@/components/Shell";
+import { formatMoney } from "@/lib/format";
 
 
 export default function PmFinancials() {
@@ -16,7 +17,7 @@ export default function PmFinancials() {
         <div style={{ background: "var(--navy-card)", border: "1px solid var(--hairline)", borderRadius: 16, padding: 16, marginTop: 12 }}>
           <div style={{ fontSize: 10.5, color: "var(--muted)" }}>Net position this month</div>
           <div className="font-display" style={{ fontSize: 24, fontWeight: 600, marginTop: 2, color: net < 0 ? "var(--sunset)" : "var(--gold-soft)" }}>
-            {net < 0 ? "-" : ""}${Math.abs(net).toLocaleString()}
+            {net < 0 ? "-" : ""}${formatMoney(Math.abs(net))}
           </div>
         </div>
 

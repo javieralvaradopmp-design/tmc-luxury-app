@@ -4,13 +4,14 @@ import { useRouter } from "next/navigation";
 import { Screen, TopBar, BottomNav, Toast, SectionTitle, FeatureRow } from "@/components/Shell";
 import { byLevelPrefix } from "@/lib/functionalities";
 import { useApp } from "@/lib/store";
+import { PROPERTIES } from "@/lib/properties";
 
-const PROPERTIES = [
-  { name: "Star Island Residence", owner: "E. Pemberton", margin: "24.1%" },
-  { name: "Fisher Island Villa", owner: "D. Marchetti", margin: "19.8%" },
-  { name: "Bal Harbour Penthouse", owner: "K. Souza", margin: "21.4%" },
-  { name: "Coconut Grove Estate", owner: "R. Palacios", margin: "22.6%" },
-];
+const MARGIN_BY_SLUG: Record<string, string> = {
+  "star-island": "24.1%",
+  "fisher-island": "19.8%",
+  "bal-harbour": "21.4%",
+  "coconut-grove": "22.6%",
+};
 
 export default function InvestorPortfolio() {
   const router = useRouter();
@@ -63,26 +64,27 @@ export default function InvestorPortfolio() {
         <SectionTitle>Properties</SectionTitle>
         {PROPERTIES.map((p) => (
           <div
-            key={p.name}
+            key={p.slug}
             onClick={() => router.push("/investor/properties")}
             style={{
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
+              gap: 12,
               background: "var(--navy-card)",
               border: "1px solid var(--hairline)",
               borderRadius: 14,
-              padding: "12px 14px",
+              padding: "10px 14px",
               marginBottom: 9,
               cursor: "pointer",
             }}
           >
-            <div>
+            <img src={p.image} alt={p.name} style={{ width: 46, height: 46, borderRadius: 10, objectFit: "cover", flex: "none" }} />
+            <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12.5, color: "var(--off-white)", fontWeight: 500 }}>{p.name}</div>
               <div style={{ fontSize: 10, color: "var(--muted)", marginTop: 2 }}>Owner: {p.owner}</div>
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 13, color: "var(--gold-soft)", fontWeight: 600 }}>{p.margin}</div>
+              <div style={{ fontSize: 13, color: "var(--gold-soft)", fontWeight: 600 }}>{MARGIN_BY_SLUG[p.slug]}</div>
               <div style={{ fontSize: 9, color: "var(--muted)" }}>margin</div>
             </div>
           </div>
